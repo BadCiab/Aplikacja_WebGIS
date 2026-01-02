@@ -74,7 +74,7 @@
             <div class="dot dot-station"></div> Istniejąca stacja
         </div>
         <div class="legend-item">
-            <div class="dot dot-range"></div> Strefa pokrycia (1.5 km)
+            <div class="dot dot-range"></div> Strefa pokrycia (1.0 km)
         </div>
     </div>
 
@@ -93,31 +93,11 @@
     // --- KONFIGURACJA ---
     mapboxgl.accessToken = 'pk.eyJ1IjoiYmFkY2lhYiIsImEiOiJjbWpycTMxdzUzcW0wM2ZxeGM3MzJmMHd3In0.x86RM6MyxrwiOKl1GAznxA';
 
-    // DANE DLA LUBLINA
-    const stacjeEV = {
-        "type": "FeatureCollection",
-        "features": [
-            // Vivo! Lublin (Tarasy Zamkowe)
-            { "type": "Feature", "properties": {"name": "Vivo! Lublin"}, "geometry": { "type": "Point", "coordinates": [22.5724, 51.2505] } },
-            // Lublin Plaza
-            { "type": "Feature", "properties": {"name": "Lublin Plaza"}, "geometry": { "type": "Point", "coordinates": [22.5516, 51.2435] } },
-            // IKEA Lublin
-            { "type": "Feature", "properties": {"name": "IKEA / Skende"}, "geometry": { "type": "Point", "coordinates": [22.5732, 51.2850] } },
-            // E.Leclerc Zana
-            { "type": "Feature", "properties": {"name": "E.Leclerc Zana"}, "geometry": { "type": "Point", "coordinates": [22.5220, 51.2380] } },
-             // Outlet Center (Mełgiewska)
-            { "type": "Feature", "properties": {"name": "Outlet Center"}, "geometry": { "type": "Point", "coordinates": [22.6100, 51.2350] } }
-        ]
-    };
-
-    // Zasięg
-    const PROMIEN_KM = 1.5;
-
     const map = new mapboxgl.Map({
         container: 'map',
         style: 'mapbox://styles/mapbox/dark-v11',
         center: [22.56, 51.24], // Centrum Lublina
-        zoom: 12, // Dobre przybliżenie na start
+        zoom: 12,
         pitch: 45,
         bearing: -10
     });
@@ -125,9 +105,104 @@
     map.addControl(new mapboxgl.NavigationControl(), 'top-right');
     map.addControl(new mapboxgl.GeolocateControl({ trackUserLocation: true }), 'top-right');
 
-    map.on('load', () => {
+    // Główna funkcja ładująca dane (ASYNC)
+    map.on('load', async () => {
         
-        // 1. Budynki 3D
+        try {
+            // 1. POBIERANIE DANYCH Z PLIKU GEOJSON
+            const response = await fetch('dane.geojson');
+            
+            if (!response.ok) {
+                throw new Error('Nie można pobrać pliku dane.geojson');
+            }
+
+            const stacjeEV = await response.json(); // Dane są teraz w tej zmiennej
+
+            // 2. Obliczenia Turf.js
+            const PROMIEN_KM = 1.0; // Zmniejszyłem do 1km, bo masz więcej stacji
+            const strefyZasiegu = turf.buffer(stacjeEV, PROMIEN_KM, { units: 'kilometers' });
+
+            // 3. Warstwy
+            // Warstwa zasięgu
+            map.addSource('zasieg-source', { type: 'geojson', data: strefyZasiegu });
+            map.addLayer({
+                id: 'zasieg-wizualizacja',
+                type: 'fill',
+                source: 'zasieg-source',
+                paint: {
+                    'fill-color': '#11b4da',
+                    'fill-opacity': 0.2,
+                    'fill-outline-color': '#11b4da'
+                }
+            });
+
+            // Warstwa punktów
+            map.addSource('stacje-source', { type: 'geojson', data: stacjeEV });
+            
+            map.addLayer({
+                id: 'stacje-glow',
+                type: 'circle',
+                source: 'stacje-source',
+                paint: {
+                    'circle-radius': 15,
+                    'circle-color': '#00ffff',
+                    'circle-opacity': 0.4,
+                    'circle-blur': 0.5
+                }
+            });
+            
+            map.addLayer({
+                id: 'stacje-punkty',
+                type: 'circle',
+                source: 'stacje-source',
+                paint: {
+                    'circle-radius': 6,
+                    'circle-color': '#ffffff'
+                }
+            });
+
+            // 4. INTERAKCJA (Klikanie) - musi być wewnątrz funkcji load, żeby widziało stacjeEV
+            let marker = new mapboxgl.Marker({ color: '#f39c12' });
+
+            map.on('click', (e) => {
+                const klik = turf.point([e.lngLat.lng, e.lngLat.lat]);
+                const najblizsza = turf.nearestPoint(klik, stacjeEV);
+                const dystans = turf.distance(klik, najblizsza, { units: 'kilometers' });
+                
+                // Zabezpieczenie, jeśli w danych OSM brakuje nazwy
+                const nazwaStacji = najblizsza.properties.name || "Stacja bez nazwy";
+
+                marker.setLngLat(e.lngLat).addTo(map);
+
+                const card = document.getElementById('result-card');
+                
+                if (dystans < PROMIEN_KM) {
+                    card.className = "status-bad";
+                    card.innerHTML = `
+                        <span class="status-title text-bad">⚠️ Lokalizacja Nieoptymalna</span>
+                        <span class="status-desc">
+                            Miejsce znajduje się w zasięgu stacji <strong>${nazwaStacji}</strong>.<br><br>
+                            Odległość: <strong>${dystans.toFixed(2)} km</strong>
+                        </span>
+                    `;
+                } else {
+                    card.className = "status-ok";
+                    card.innerHTML = `
+                        <span class="status-title text-ok">✅ Rekomendacja Pozytywna</span>
+                        <span class="status-desc">
+                            Teren ("biała plama") wymaga inwestycji.<br><br>
+                            Odległość do najbliższej: <strong>${dystans.toFixed(2)} km</strong>
+                        </span>
+                    `;
+                }
+            });
+
+        } catch (error) {
+            console.error(error);
+            alert("Błąd ładowania danych! Upewnij się, że plik dane.geojson jest w repozytorium.");
+        }
+
+        // 5. Budynki 3D (osobna warstwa, niezależna od danych)
         map.addLayer({
             'id': '3d-buildings',
             'source': 'composite',
@@ -142,79 +217,6 @@
                 'fill-extrusion-opacity': 0.1
             }
         });
-
-        // 2. Obliczenia Turf.js
-        const strefyZasiegu = turf.buffer(stacjeEV, PROMIEN_KM, { units: 'kilometers' });
-
-        // 3. Warstwy
-        map.addSource('zasieg-source', { type: 'geojson', data: strefyZasiegu });
-        map.addLayer({
-            id: 'zasieg-wizualizacja',
-            type: 'fill',
-            source: 'zasieg-source',
-            paint: {
-                'fill-color': '#11b4da',
-                'fill-opacity': 0.2,
-                'fill-outline-color': '#11b4da'
-            }
-        });
-
-        map.addSource('stacje-source', { type: 'geojson', data: stacjeEV });
-        
-        map.addLayer({
-            id: 'stacje-glow',
-            type: 'circle',
-            source: 'stacje-source',
-            paint: {
-                'circle-radius': 15,
-                'circle-color': '#00ffff',
-                'circle-opacity': 0.4,
-                'circle-blur': 0.5
-            }
-        });
-        
-        map.addLayer({
-            id: 'stacje-punkty',
-            type: 'circle',
-            source: 'stacje-source',
-            paint: {
-                'circle-radius': 6,
-                'circle-color': '#ffffff'
-            }
-        });
-    });
-
-    let marker = new mapboxgl.Marker({ color: '#f39c12' });
-
-    map.on('click', (e) => {
-        const klik = turf.point([e.lngLat.lng, e.lngLat.lat]);
-        const najblizsza = turf.nearestPoint(klik, stacjeEV);
-        const dystans = turf.distance(klik, najblizsza, { units: 'kilometers' });
-        const nazwaStacji = najblizsza.properties.name;
-
-        marker.setLngLat(e.lngLat).addTo(map);
-
-        const card = document.getElementById('result-card');
-        
-        if (dystans < PROMIEN_KM) {
-            card.className = "status-bad";
-            card.innerHTML = `
-                <span class="status-title text-bad">⚠️ Lokalizacja Nieoptymalna</span>
-                <span class="status-desc">
-                    Miejsce znajduje się w zasięgu stacji <strong>${nazwaStacji}</strong>.<br><br>
-                    Odległość: <strong>${dystans.toFixed(2)} km</strong>
-                </span>
-            `;
-        } else {
-            card.className = "status-ok";
-            card.innerHTML = `
-                <span class="status-title text-ok">✅ Rekomendacja Pozytywna</span>
-                <span class="status-desc">
-                    Teren ("biała plama") wymaga inwestycji.<br><br>
-                    Odległość do najbliższej: <strong>${dystans.toFixed(2)} km</strong>
-                </span>
-            `;
-        }
     });
 
     map.getCanvas().style.cursor = 'crosshair';
