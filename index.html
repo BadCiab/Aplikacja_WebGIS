@@ -182,7 +182,7 @@
 
     map.on('load', async () => {
         try {
-            const response = await fetch('dane.geojson');
+            const response = await fetch('export.geojson');
             if (!response.ok) throw new Error('Błąd pliku dane.geojson');
             
             const suroweDane = await response.json();
