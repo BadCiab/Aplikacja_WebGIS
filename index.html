@@ -120,7 +120,7 @@
 <div id="map"></div>
 
 <script>
-    mapboxgl.accessToken = 'pk.eyJ1IjoiYmFkY2lhYiIsImEiOiJjbWpycTMxdzUzcW0wM2ZxeGM3MzJmMHd3In0.x86RM6MyxrwiOKl1GAznxA';
+    mapboxgl.accessToken = 'pk.eyJ1IjoiYmFkY2lhYiIsImEiOiJjbWp4MHJodXYwMGxsM2ZyMHV0YnkybnRuIn0.sHfLN0L0NuwGPg7NxBTIJA';
 
     const map = new mapboxgl.Map({
         container: 'map',
@@ -153,16 +153,8 @@
                     'line-dasharray': [2, 1] 
                 }
             });
-            map.addLayer({
-                id: 'granice-wypelnienie',
-                type: 'fill',
-                source: 'granice-source',
-                paint: {
-                    'fill-color': '#f39c12',
-                    'fill-opacity': 0.05
-                }
-            });
         }
+
         if (!map.getSource('stacje-source')) {
             const PROMIEN_KM = 1.0; 
             const strefyZasiegu = turf.buffer(globalneStacje, PROMIEN_KM, { units: 'kilometers' });
