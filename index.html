@@ -110,7 +110,7 @@
         
         try {
             // 1. POBIERANIE DANYCH Z PLIKU GEOJSON
-            const response = await fetch('dane.geojson');
+            const response = await fetch('export.geojson');
             
             if (!response.ok) {
                 throw new Error('Nie można pobrać pliku dane.geojson');
