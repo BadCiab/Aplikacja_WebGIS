@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Projekt WebGIS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.1.2/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.1.2/mapbox-gl.css" rel="stylesheet" />
+    <script src="https://unpkg.com/@turf/turf/turf.min.js"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        body { margin: 0; padding: 0; font-family: 'Inter', sans-serif; display: flex; height: 100vh; overflow: hidden; }
+        
+        #sidebar {
+            width: 350px;
+            background: #1e1e24;
+            color: #ffffff;
+            padding: 30px;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.3);
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        #map { flex-grow: 1; }
+
+        h1 { font-size: 22px; font-weight: 600; margin-bottom: 5px; color: #fff; }
+        h2 { font-size: 14px; color: #8b9bb4; margin-top: 0; font-weight: 400; text-transform: uppercase; letter-spacing: 1px; }
+        p { font-size: 14px; line-height: 1.5; color: #aab2c0; }
+
+        .legend-item { display: flex; align-items: center; margin-bottom: 12px; font-size: 14px; }
+        .dot { width: 14px; height: 14px; border-radius: 50%; margin-right: 12px; }
+        .dot-station { background: #00ffff; box-shadow: 0 0 8px #00ffff; }
+        .dot-range { background: rgba(17, 180, 218, 0.4); border: 1px solid #11b4da; }
+
+        #result-card {
+            background: #2b2b36;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #555;
+            transition: all 0.3s ease;
+        }
+        .status-title { font-weight: 600; font-size: 16px; display: block; margin-bottom: 8px; }
+        .status-desc { font-size: 13px; color: #ccc; }
+        
+        .status-ok { border-color: #27ae60 !important; }
+        .text-ok { color: #27ae60; }
+        .status-bad { border-color: #e74c3c !important; }
+        .text-bad { color: #e74c3c; }
+
+        .footer { font-size: 11px; color: #555; text-align: center; margin-top: 20px; }
+
+        @media (max-width: 600px) {
+            body { flex-direction: column; }
+            #sidebar { width: auto; height: 30%; padding: 15px; overflow-y: auto; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="sidebar">
+    <div>
+        <h1>Projekt WebGIS</h1>
+        <h2>Analiza Infrastruktury Miejskiej</h2>
+        <p>Aplikacja wyznacza obszary deficytu ładowarek elektrycznych na terenie miasta Lublin.</p>
+        
+        <hr style="border: 0; border-top: 1px solid #333; margin: 20px 0;">
+
+        <div class="legend-item">
+            <div class="dot dot-station"></div> Istniejąca stacja
+        </div>
+        <div class="legend-item">
+            <div class="dot dot-range"></div> Strefa pokrycia (1.5 km)
+        </div>
+    </div>
+
+    <div>
+        <div id="result-card">
+            <span class="status-title" style="color: #fff;">Gotowy do analizy</span>
+            <span class="status-desc">Kliknij w dzielnicę mieszkalną, aby sprawdzić dostępność ładowarki.</span>
+        </div>
+        <div class="footer">Projekt WebGIS - Politechnika Lubelska / UMCS / UP</div>
+    </div>
+</div>
+
+<div id="map"></div>
+
+<script>
+    // --- KONFIGURACJA ---
+    mapboxgl.accessToken = 'pk.eyJ1IjoiYmFkY2lhYiIsImEiOiJjbWpycTMxdzUzcW0wM2ZxeGM3MzJmMHd3In0.x86RM6MyxrwiOKl1GAznxA';
+
+    // DANE DLA LUBLINA
+    const stacjeEV = {
+        "type": "FeatureCollection",
+        "features": [
+            // Vivo! Lublin (Tarasy Zamkowe)
+            { "type": "Feature", "properties": {"name": "Vivo! Lublin"}, "geometry": { "type": "Point", "coordinates": [22.5724, 51.2505] } },
+            // Lublin Plaza
+            { "type": "Feature", "properties": {"name": "Lublin Plaza"}, "geometry": { "type": "Point", "coordinates": [22.5516, 51.2435] } },
+            // IKEA Lublin
+            { "type": "Feature", "properties": {"name": "IKEA / Skende"}, "geometry": { "type": "Point", "coordinates": [22.5732, 51.2850] } },
+            // E.Leclerc Zana
+            { "type": "Feature", "properties": {"name": "E.Leclerc Zana"}, "geometry": { "type": "Point", "coordinates": [22.5220, 51.2380] } },
+             // Outlet Center (Mełgiewska)
+            { "type": "Feature", "properties": {"name": "Outlet Center"}, "geometry": { "type": "Point", "coordinates": [22.6100, 51.2350] } }
+        ]
+    };
+
+    // Zasięg - dla Lublina dałem 1.5km, bo miasto jest mniej zagęszczone niż Warszawa
+    const PROMIEN_KM = 1.5;
+
+    const map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/dark-v11',
+        center: [22.56, 51.24], // Centrum Lublina
+        zoom: 12, // Dobre przybliżenie na start
+        pitch: 45,
+        bearing: -10
+    });
+
+    map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+    map.addControl(new mapboxgl.GeolocateControl({ trackUserLocation: true }), 'top-right');
+
+    map.on('load', () => {
+        
+        // 1. Budynki 3D
+        map.addLayer({
+            'id': '3d-buildings',
+            'source': 'composite',
+            'source-layer': 'building',
+            'filter': ['==', 'extrude', 'true'],
+            'type': 'fill-extrusion',
+            'minzoom': 13,
+            'paint': {
+                'fill-extrusion-color': '#aaa',
+                'fill-extrusion-height': ['get', 'height'],
+                'fill-extrusion-base': ['get', 'min_height'],
+                'fill-extrusion-opacity': 0.1
+            }
+        });
+
+        // 2. Obliczenia Turf.js
+        const strefyZasiegu = turf.buffer(stacjeEV, PROMIEN_KM, { units: 'kilometers' });
+
+        // 3. Warstwy
+        map.addSource('zasieg-source', { type: 'geojson', data: strefyZasiegu });
+        map.addLayer({
+            id: 'zasieg-wizualizacja',
+            type: 'fill',
+            source: 'zasieg-source',
+            paint: {
+                'fill-color': '#11b4da',
+                'fill-opacity': 0.2,
+                'fill-outline-color': '#11b4da'
+            }
+        });
+
+        map.addSource('stacje-source', { type: 'geojson', data: stacjeEV });
+        
+        map.addLayer({
+            id: 'stacje-glow',
+            type: 'circle',
+            source: 'stacje-source',
+            paint: {
+                'circle-radius': 15,
+                'circle-color': '#00ffff',
+                'circle-opacity': 0.4,
+                'circle-blur': 0.5
+            }
+        });
+        
+        map.addLayer({
+            id: 'stacje-punkty',
+            type: 'circle',
+            source: 'stacje-source',
+            paint: {
+                'circle-radius': 6,
+                'circle-color': '#ffffff'
+            }
+        });
+    });
+
+    let marker = new mapboxgl.Marker({ color: '#f39c12' });
+
+    map.on('click', (e) => {
+        const klik = turf.point([e.lngLat.lng, e.lngLat.lat]);
+        const najblizsza = turf.nearestPoint(klik, stacjeEV);
+        const dystans = turf.distance(klik, najblizsza, { units: 'kilometers' });
+        const nazwaStacji = najblizsza.properties.name;
+
+        marker.setLngLat(e.lngLat).addTo(map);
+
+        const card = document.getElementById('result-card');
+        
+        if (dystans < PROMIEN_KM) {
+            card.className = "status-bad";
+            card.innerHTML = `
+                <span class="status-title text-bad">⚠️ Lokalizacja Nieoptymalna</span>
+                <span class="status-desc">
+                    Miejsce znajduje się w zasięgu stacji <strong>${nazwaStacji}</strong>.<br><br>
+                    Odległość: <strong>${dystans.toFixed(2)} km</strong>
+                </span>
+            `;
+        } else {
+            card.className = "status-ok";
+            card.innerHTML = `
+                <span class="status-title text-ok">✅ Rekomendacja Pozytywna</span>
+                <span class="status-desc">
+                    Teren ("biała plama") wymaga inwestycji.<br><br>
+                    Odległość do najbliższej: <strong>${dystans.toFixed(2)} km</strong>
+                </span>
+            `;
+        }
+    });
+
+    map.getCanvas().style.cursor = 'crosshair';
+</script>
+
+</body>
+</html>
