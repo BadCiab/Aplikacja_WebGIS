@@ -35,8 +35,10 @@
 
         .legend-item { display: flex; align-items: center; margin-bottom: 12px; font-size: 14px; }
         .dot { width: 14px; height: 14px; border-radius: 50%; margin-right: 12px; }
+        
         .dot-station { background: #00ffff; box-shadow: 0 0 8px #00ffff; }
         .dot-range { background: rgba(17, 180, 218, 0.4); border: 1px solid #11b4da; }
+        .dot-border { border: 2px dashed #f39c12; background: transparent; box-sizing: border-box; }
 
         .layer-switcher { margin-top: 20px; background: #2b2b36; padding: 15px; border-radius: 8px; }
         .radio-group { display: flex; flex-direction: column; gap: 8px; }
@@ -77,6 +79,9 @@
         
         <hr style="border: 0; border-top: 1px solid #333; margin: 20px 0;">
 
+        <div class="legend-item">
+            <div class="dot dot-border"></div> Granice Administracyjne
+        </div>
         <div class="legend-item">
             <div class="dot dot-station"></div> Istniejąca stacja
         </div>
@@ -121,7 +126,7 @@
         container: 'map',
         style: 'mapbox://styles/mapbox/dark-v11',
         center: [22.56, 51.24],
-        zoom: 12,
+        zoom: 11.5,
         pitch: 45,
         bearing: -10
     });
@@ -129,38 +134,63 @@
     map.addControl(new mapboxgl.NavigationControl(), 'top-right');
     map.addControl(new mapboxgl.GeolocateControl({ trackUserLocation: true }), 'top-right');
 
-    let mojeDaneGeoJSON = null; 
+    let globalneStacje = null; 
+    let globalneGranice = null;
 
     function dodajNaszeWarstwy() {
-        if (!mojeDaneGeoJSON) return; 
-        if (map.getSource('stacje-source')) return; 
+        if (!globalneStacje || !globalneGranice) return; 
 
-        const PROMIEN_KM = 1.0; 
-        const strefyZasiegu = turf.buffer(mojeDaneGeoJSON, PROMIEN_KM, { units: 'kilometers' });
+        if (!map.getSource('granice-source')) {
+            map.addSource('granice-source', { type: 'geojson', data: globalneGranice });
+            
+            map.addLayer({
+                id: 'granice-linia',
+                type: 'line',
+                source: 'granice-source',
+                paint: {
+                    'line-color': '#f39c12',
+                    'line-width': 3,
+                    'line-dasharray': [2, 1] 
+                }
+            });
+            map.addLayer({
+                id: 'granice-wypelnienie',
+                type: 'fill',
+                source: 'granice-source',
+                paint: {
+                    'fill-color': '#f39c12',
+                    'fill-opacity': 0.05
+                }
+            });
+        }
+        if (!map.getSource('stacje-source')) {
+            const PROMIEN_KM = 1.0; 
+            const strefyZasiegu = turf.buffer(globalneStacje, PROMIEN_KM, { units: 'kilometers' });
 
-        map.addSource('zasieg-source', { type: 'geojson', data: strefyZasiegu });
-        map.addLayer({
-            id: 'zasieg-wizualizacja',
-            type: 'fill',
-            source: 'zasieg-source',
-            paint: { 'fill-color': '#11b4da', 'fill-opacity': 0.2, 'fill-outline-color': '#11b4da' }
-        });
+            map.addSource('zasieg-source', { type: 'geojson', data: strefyZasiegu });
+            map.addLayer({
+                id: 'zasieg-wizualizacja',
+                type: 'fill',
+                source: 'zasieg-source',
+                paint: { 'fill-color': '#11b4da', 'fill-opacity': 0.2, 'fill-outline-color': '#11b4da' }
+            });
 
-        map.addSource('stacje-source', { type: 'geojson', data: mojeDaneGeoJSON });
-        
-        map.addLayer({
-            id: 'stacje-glow',
-            type: 'circle',
-            source: 'stacje-source',
-            paint: { 'circle-radius': 15, 'circle-color': '#00ffff', 'circle-opacity': 0.4, 'circle-blur': 0.5 }
-        });
-        
-        map.addLayer({
-            id: 'stacje-punkty',
-            type: 'circle',
-            source: 'stacje-source',
-            paint: { 'circle-radius': 6, 'circle-color': '#ffffff' }
-        });
+            map.addSource('stacje-source', { type: 'geojson', data: globalneStacje });
+            
+            map.addLayer({
+                id: 'stacje-glow',
+                type: 'circle',
+                source: 'stacje-source',
+                paint: { 'circle-radius': 15, 'circle-color': '#00ffff', 'circle-opacity': 0.4, 'circle-blur': 0.5 }
+            });
+            
+            map.addLayer({
+                id: 'stacje-punkty',
+                type: 'circle',
+                source: 'stacje-source',
+                paint: { 'circle-radius': 6, 'circle-color': '#ffffff' }
+            });
+        }
 
         if (!map.getLayer('3d-buildings')) {
             map.addLayer({
@@ -182,15 +212,23 @@
 
     map.on('load', async () => {
         try {
-            const response = await fetch('export.geojson');
-            if (!response.ok) throw new Error('Błąd pliku dane.geojson');
-            
-            const suroweDane = await response.json();
+            const [respStacje, respGranice] = await Promise.all([
+                fetch('export.geojson'),
+                fetch('granice.geojson')
+            ]);
 
-            mojeDaneGeoJSON = {
+            if (!respStacje.ok) throw new Error('Błąd pliku export.geojson');
+            if (!respGranice.ok) throw new Error('Błąd pliku granice.geojson');
+            
+            const suroweStacje = await respStacje.json();
+            const suroweGranice = await respGranice.json();
+
+            globalneStacje = {
                 type: "FeatureCollection",
-                features: suroweDane.features.filter(f => f.geometry.type === 'Point')
+                features: suroweStacje.features.filter(f => f.geometry.type === 'Point')
             };
+
+            globalneGranice = suroweGranice;
 
             dodajNaszeWarstwy();
 
@@ -215,10 +253,10 @@
     let marker = new mapboxgl.Marker({ color: '#f39c12' });
 
     map.on('click', (e) => {
-        if (!mojeDaneGeoJSON) return;
+        if (!globalneStacje) return;
 
         const klik = turf.point([e.lngLat.lng, e.lngLat.lat]);
-        const najblizsza = turf.nearestPoint(klik, mojeDaneGeoJSON);
+        const najblizsza = turf.nearestPoint(klik, globalneStacje);
         const dystans = turf.distance(klik, najblizsza, { units: 'kilometers' });
         
         const nazwaStacji = najblizsza.properties.name || "Stacja bez nazwy";
