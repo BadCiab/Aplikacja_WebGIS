@@ -107,15 +107,12 @@
     map.on('load', async () => {
         try {
             console.log("Pobieranie danych...");
-            const response = await fetch('dane.geojson');
+            const response = await fetch('export.geojson');
             
             if (!response.ok) throw new Error('Błąd pobierania pliku');
             
             const suroweDane = await response.json();
 
-            // --- FIX: FILTROWANIE (NAPRAWA BŁĘDU TURF.JS) ---
-            // Overpass Turbo często zwraca budynki (Polygon). Turf potrzebuje tylko punktów (Point).
-            // Tworzymy nową listę, która zawiera TYLKO punkty.
             const stacjeEV = {
                 type: "FeatureCollection",
                 features: suroweDane.features.filter(f => f.geometry.type === 'Point')
@@ -123,13 +120,11 @@
 
             console.log("Znaleziono punktów:", stacjeEV.features.length);
 
-            // ZABEZPIECZENIE: Jeśli po filtrowaniu nie ma żadnych punktów
             if (stacjeEV.features.length === 0) {
                 alert("UWAGA: Plik dane.geojson nie zawiera żadnych punktów! (Może same poligony?)");
-                return; // Zatrzymaj kod, żeby nie było błędów
+                return; 
             }
 
-            // Dalsza część kodu (bez zmian)
             const PROMIEN_KM = 1.0; 
             const strefyZasiegu = turf.buffer(stacjeEV, PROMIEN_KM, { units: 'kilometers' });
 
@@ -155,17 +150,13 @@
                 paint: { 'circle-radius': 6, 'circle-color': '#ffffff' }
             });
 
-            // INTERAKCJA
             let marker = new mapboxgl.Marker({ color: '#f39c12' });
 
             map.on('click', (e) => {
-                // Tworzymy punkt w miejscu kliknięcia
                 const klik = turf.point([e.lngLat.lng, e.lngLat.lat]);
                 
-                // Znajdź najbliższy punkt (teraz zadziała, bo mamy same punkty!)
                 const najblizsza = turf.nearestPoint(klik, stacjeEV);
                 
-                // Oblicz dystans
                 const dystans = turf.distance(klik, najblizsza, { units: 'kilometers' });
                 
                 const nazwaStacji = najblizsza.properties.name || "Stacja bez nazwy";
