@@ -205,7 +205,7 @@
     map.on('load', async () => {
         try {
             const [respStacje, respGranice] = await Promise.all([
-                fetch('export.geojson'),
+                fetch('punkty.geojson'),
                 fetch('granice.geojson')
             ]);
 
