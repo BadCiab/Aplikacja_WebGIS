@@ -7,32 +7,15 @@
     
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.1.2/mapbox-gl.js"></script>
     <link href="https://api.mapbox.com/mapbox-gl-js/v3.1.2/mapbox-gl.css" rel="stylesheet" />
-    
     <script src="https://unpkg.com/@turf/turf/turf.min.js"></script>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
     <style>
-        /* Domyślna czcionka dla całej strony to Roboto */
-        body { 
-            margin: 0; 
-            padding: 0; 
-            font-family: 'Roboto', sans-serif; 
-            display: flex; 
-            height: 100vh; 
-            overflow: hidden; 
-        }
+        body { margin: 0; padding: 0; font-family: 'Inter', sans-serif; display: flex; height: 100vh; overflow: hidden; }
         
-        /* --- ZMIANY TUTAJ --- */
         #sidebar {
             width: 350px;
-            
-            /* 1. ZMIANA KOLORU NA ZIELONY */
-            background: #2E7D32; 
-            
-            /* 2. ZMIANA CZCIONKI NA COMIC SANS */
-            font-family: 'Comic Sans MS', 'Comic Sans', cursive;
-            
+            background: #1e1e24;
             color: #ffffff;
             padding: 30px;
             box-shadow: 2px 0 10px rgba(0,0,0,0.3);
@@ -45,10 +28,10 @@
 
         #map { flex-grow: 1; }
 
-        h1 { font-size: 22px; font-weight: 700; margin-bottom: 5px; color: #fff; }
-        h2 { font-size: 14px; color: #a5d6a7; margin-top: 0; font-weight: 400; text-transform: uppercase; letter-spacing: 1px; }
-        h3 { font-size: 13px; margin-bottom: 10px; color: #fff; border-bottom: 1px solid #81c784; padding-bottom: 5px; }
-        p { font-size: 14px; line-height: 1.5; color: #e8f5e9; }
+        h1 { font-size: 22px; font-weight: 600; margin-bottom: 5px; color: #fff; }
+        h2 { font-size: 14px; color: #8b9bb4; margin-top: 0; font-weight: 400; text-transform: uppercase; letter-spacing: 1px; }
+        h3 { font-size: 13px; margin-bottom: 10px; color: #fff; border-bottom: 1px solid #444; padding-bottom: 5px; }
+        p { font-size: 14px; line-height: 1.5; color: #aab2c0; }
 
         .legend-item { display: flex; align-items: center; margin-bottom: 12px; font-size: 14px; }
         .dot { width: 14px; height: 14px; border-radius: 50%; margin-right: 12px; }
@@ -57,30 +40,28 @@
         .dot-range { background: rgba(17, 180, 218, 0.4); border: 1px solid #11b4da; }
         .dot-border { border: 2px dashed #f39c12; background: transparent; box-sizing: border-box; }
 
-        /* Styl przełącznika dostosowany do zielonego tła */
-        .layer-switcher { margin-top: 20px; background: #1b5e20; padding: 15px; border-radius: 8px; }
+        .layer-switcher { margin-top: 20px; background: #2b2b36; padding: 15px; border-radius: 8px; }
         .radio-group { display: flex; flex-direction: column; gap: 8px; }
         .radio-group label { cursor: pointer; font-size: 14px; display: flex; align-items: center; }
         .radio-group input { margin-right: 10px; accent-color: #00ffff; }
 
-        /* Karta wyników */
         #result-card {
-            background: #1b5e20;
+            background: #2b2b36;
             padding: 20px;
             border-radius: 8px;
-            border-left: 4px solid #fff;
+            border-left: 4px solid #555;
             transition: all 0.3s ease;
             margin-bottom: 20px;
         }
-        .status-title { font-weight: 700; font-size: 16px; display: block; margin-bottom: 8px; }
-        .status-desc { font-size: 13px; color: #e8f5e9; }
+        .status-title { font-weight: 600; font-size: 16px; display: block; margin-bottom: 8px; }
+        .status-desc { font-size: 13px; color: #ccc; }
         
-        .status-ok { border-color: #66bb6a !important; }
-        .text-ok { color: #66bb6a; }
-        .status-bad { border-color: #ef5350 !important; }
-        .text-bad { color: #ef5350; }
+        .status-ok { border-color: #27ae60 !important; }
+        .text-ok { color: #27ae60; }
+        .status-bad { border-color: #e74c3c !important; }
+        .text-bad { color: #e74c3c; }
 
-        .footer { font-size: 11px; color: #a5d6a7; text-align: center; margin-top: 20px; }
+        .footer { font-size: 11px; color: #555; text-align: center; margin-top: 20px; }
 
         @media (max-width: 600px) {
             body { flex-direction: column; }
@@ -96,7 +77,7 @@
         <h2>Analiza Infrastruktury Miejskiej</h2>
         <p>Aplikacja wyznacza obszary deficytu ładowarek elektrycznych na terenie miasta Lublin.</p>
         
-        <hr style="border: 0; border-top: 1px solid #81c784; margin: 20px 0;">
+        <hr style="border: 0; border-top: 1px solid #333; margin: 20px 0;">
 
         <div class="legend-item">
             <div class="dot dot-border"></div> Granice Administracyjne
@@ -132,14 +113,13 @@
             <span class="status-title" style="color: #fff;">Gotowy do analizy</span>
             <span class="status-desc">Kliknij w dzielnicę mieszkalną, aby sprawdzić dostępność ładowarki.</span>
         </div>
-        <div class="footer">Projekt WebGIS - Politechnika Lubelska / UMCS / UP</div>
+        <div class="footer">Projekt WebGIS - UMCS</div>
     </div>
 </div>
 
 <div id="map"></div>
 
 <script>
-    // Twój token Mapbox
     mapboxgl.accessToken = 'pk.eyJ1IjoiYmFkY2lhYiIsImEiOiJjbWp4MHJodXYwMGxsM2ZyMHV0YnkybnRuIn0.sHfLN0L0NuwGPg7NxBTIJA';
 
     const map = new mapboxgl.Map({
@@ -157,13 +137,12 @@
     let globalneStacje = null; 
     let globalneGranice = null;
 
-    // Funkcja rysująca
     function dodajNaszeWarstwy() {
         if (!globalneStacje || !globalneGranice) return; 
 
-        // 1. Granice (linia)
         if (!map.getSource('granice-source')) {
             map.addSource('granice-source', { type: 'geojson', data: globalneGranice });
+            
             map.addLayer({
                 id: 'granice-linia',
                 type: 'line',
@@ -176,7 +155,6 @@
             });
         }
 
-        // 2. Stacje i bufory
         if (!map.getSource('stacje-source')) {
             const PROMIEN_KM = 1.0; 
             const strefyZasiegu = turf.buffer(globalneStacje, PROMIEN_KM, { units: 'kilometers' });
@@ -206,7 +184,6 @@
             });
         }
 
-        // 3. Budynki 3D
         if (!map.getLayer('3d-buildings')) {
             map.addLayer({
                 'id': '3d-buildings',
@@ -227,14 +204,13 @@
 
     map.on('load', async () => {
         try {
-            // POPRAWIŁEM NAZWĘ PLIKU NA 'export.geojson'
             const [respStacje, respGranice] = await Promise.all([
-                fetch('export.geojson'), 
+                fetch('punkty.geojson'),
                 fetch('granice.geojson')
             ]);
 
-            if (!respStacje.ok) throw new Error('Brak pliku export.geojson (sprawdź nazwę pliku na GitHub)');
-            if (!respGranice.ok) throw new Error('Brak pliku granice.geojson');
+            if (!respStacje.ok) throw new Error('Błąd pliku export.geojson');
+            if (!respGranice.ok) throw new Error('Błąd pliku granice.geojson');
             
             const suroweStacje = await respStacje.json();
             const suroweGranice = await respGranice.json();
