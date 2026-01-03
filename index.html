@@ -7,11 +7,20 @@
     
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.1.2/mapbox-gl.js"></script>
     <link href="https://api.mapbox.com/mapbox-gl-js/v3.1.2/mapbox-gl.css" rel="stylesheet" />
+    
     <script src="https://unpkg.com/@turf/turf/turf.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
 
     <style>
-        body { margin: 0; padding: 0; font-family: 'Inter', sans-serif; display: flex; height: 100vh; overflow: hidden; }
+        body { 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Roboto', sans-serif; /* Zmieniona czcionka */
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+        }
         
         #sidebar {
             width: 350px;
@@ -28,7 +37,7 @@
 
         #map { flex-grow: 1; }
 
-        h1 { font-size: 22px; font-weight: 600; margin-bottom: 5px; color: #fff; }
+        h1 { font-size: 22px; font-weight: 700; margin-bottom: 5px; color: #fff; }
         h2 { font-size: 14px; color: #8b9bb4; margin-top: 0; font-weight: 400; text-transform: uppercase; letter-spacing: 1px; }
         h3 { font-size: 13px; margin-bottom: 10px; color: #fff; border-bottom: 1px solid #444; padding-bottom: 5px; }
         p { font-size: 14px; line-height: 1.5; color: #aab2c0; }
@@ -53,7 +62,7 @@
             transition: all 0.3s ease;
             margin-bottom: 20px;
         }
-        .status-title { font-weight: 600; font-size: 16px; display: block; margin-bottom: 8px; }
+        .status-title { font-weight: 700; font-size: 16px; display: block; margin-bottom: 8px; }
         .status-desc { font-size: 13px; color: #ccc; }
         
         .status-ok { border-color: #27ae60 !important; }
@@ -113,14 +122,15 @@
             <span class="status-title" style="color: #fff;">Gotowy do analizy</span>
             <span class="status-desc">Kliknij w dzielnicę mieszkalną, aby sprawdzić dostępność ładowarki.</span>
         </div>
-        <div class="footer">Projekt WebGIS - Politechnika Lubelska / UMCS / UP</div>
+        <div class="footer">Projekt WebGIS - UMCS</div>
     </div>
 </div>
 
 <div id="map"></div>
 
 <script>
-    mapboxgl.accessToken = 'pk.eyJ1IjoiYmFkY2lhYiIsImEiOiJjbWp4MHJodXYwMGxsM2ZyMHV0YnkybnRuIn0.sHfLN0L0NuwGPg7NxBTIJA';
+    // Twój token Mapbox
+    mapboxgl.accessToken = 'pk.eyJ1IjoiYmFkY2lhYiIsImEiOiJjbWj4MHJodXYwMGxsM2ZyMHV0YnkybnRuIn0.sHfLN0L0NuwGPg7NxBTIJA';
 
     const map = new mapboxgl.Map({
         container: 'map',
@@ -134,12 +144,15 @@
     map.addControl(new mapboxgl.NavigationControl(), 'top-right');
     map.addControl(new mapboxgl.GeolocateControl({ trackUserLocation: true }), 'top-right');
 
+    // Zmienne globalne na dane
     let globalneStacje = null; 
     let globalneGranice = null;
 
+    // Funkcja rysująca warstwy (uruchamiana przy starcie i zmianie stylu)
     function dodajNaszeWarstwy() {
         if (!globalneStacje || !globalneGranice) return; 
 
+        // 1. Warstwa GRANICE (Tylko linia)
         if (!map.getSource('granice-source')) {
             map.addSource('granice-source', { type: 'geojson', data: globalneGranice });
             
@@ -155,6 +168,7 @@
             });
         }
 
+        // 2. Warstwy STACJE i BUFORY
         if (!map.getSource('stacje-source')) {
             const PROMIEN_KM = 1.0; 
             const strefyZasiegu = turf.buffer(globalneStacje, PROMIEN_KM, { units: 'kilometers' });
@@ -184,6 +198,7 @@
             });
         }
 
+        // 3. Budynki 3D (Ozdoba)
         if (!map.getLayer('3d-buildings')) {
             map.addLayer({
                 'id': '3d-buildings',
@@ -202,19 +217,22 @@
         }
     }
 
+    // Ładowanie danych przy starcie
     map.on('load', async () => {
         try {
+            // Pobieramy oba pliki GeoJSON
             const [respStacje, respGranice] = await Promise.all([
                 fetch('punkty.geojson'),
                 fetch('granice.geojson')
             ]);
 
-            if (!respStacje.ok) throw new Error('Błąd pliku export.geojson');
+            if (!respStacje.ok) throw new Error('Błąd pliku punkty.geojson');
             if (!respGranice.ok) throw new Error('Błąd pliku granice.geojson');
             
             const suroweStacje = await respStacje.json();
             const suroweGranice = await respGranice.json();
 
+            // Filtracja, żeby mieć pewność, że stacje to tylko punkty
             globalneStacje = {
                 type: "FeatureCollection",
                 features: suroweStacje.features.filter(f => f.geometry.type === 'Point')
@@ -222,8 +240,10 @@
 
             globalneGranice = suroweGranice;
 
+            // Rysujemy na mapie
             dodajNaszeWarstwy();
 
+            // Obsługa guzików zmiany stylu
             const inputs = document.querySelectorAll('input[name="style"]');
             for (const input of inputs) {
                 input.onclick = (layer) => {
@@ -232,6 +252,7 @@
                 };
             }
 
+            // Gdy styl się przeładuje, musimy narysować warstwy od nowa
             map.on('style.load', () => {
                 dodajNaszeWarstwy();
             });
@@ -242,6 +263,7 @@
         }
     });
 
+    // Interakcja (Klikanie w mapę)
     let marker = new mapboxgl.Marker({ color: '#f39c12' });
 
     map.on('click', (e) => {
