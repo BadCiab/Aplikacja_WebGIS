@@ -1,0 +1,813 @@
+{
+  "type": "FeatureCollection",
+  "generator": "overpass-turbo",
+  "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.",
+  "timestamp": "2026-01-03T16:15:01Z",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1453737293",
+        "amenity": "charging_station",
+        "capacity": "2",
+        "fee": "yes",
+        "motorcar": "yes",
+        "motorcycle": "yes",
+        "opening_hours": "24/7",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.5073244,
+          51.2766531
+        ]
+      },
+      "id": "way/1453737293"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1454867787",
+        "amenity": "charging_station",
+        "capacity": "6",
+        "fee": "yes",
+        "motorcar": "yes",
+        "motorcycle": "yes",
+        "name": "InbalanceGrid",
+        "socket:type2_cable": "6",
+        "socket:type2_cable:output": "22 kW",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.510487,
+          51.2219705
+        ]
+      },
+      "id": "way/1454867787"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4367763288",
+        "access": "yes",
+        "amenity": "charging_station",
+        "capacity": "3",
+        "charge": "2.20/kWh",
+        "fee": "yes",
+        "level": "-2",
+        "motorcar": "yes",
+        "name": "GreenWay",
+        "opening_hours": "Mo-Sa 09:00-21:00; Su 09:00-20:00",
+        "operator": "GreenWay",
+        "operator:wikidata": "Q116450281",
+        "parking:fee": "no",
+        "source": "knowledge"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.5763545,
+          51.2496351
+        ]
+      },
+      "id": "node/4367763288"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5834242906",
+        "amenity": "charging_station",
+        "authentication:app": "yes",
+        "authentication:membership_card": "yes",
+        "bicycle": "no",
+        "capacity": "3",
+        "description": "Level -1, zone L35",
+        "description:en": "Level -1, zone L35",
+        "description:pl": "Poziom -1, miejsce L35",
+        "fee": "yes",
+        "motorcar": "yes",
+        "name": "GreenWay",
+        "network": "GreenWay",
+        "opening_hours": "24/7",
+        "operator": "GreenWay",
+        "operator:wikidata": "Q116450281",
+        "phone": "+48 58 325 10 77",
+        "scooter": "no",
+        "socket:chademo": "1",
+        "socket:chademo:output": "50 kW",
+        "socket:type2": "1",
+        "socket:type2:output": "42 kW",
+        "socket:type2_combo": "1",
+        "socket:type2_combo:output": "50 kW",
+        "website": "https://greenwaypolska.pl"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.6166,
+          51.2315
+        ]
+      },
+      "id": "node/5834242906"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6407592335",
+        "amenity": "charging_station",
+        "authentication:app": "yes",
+        "authentication:membership_card": "yes",
+        "bicycle": "no",
+        "capacity": "3",
+        "charge": "≈2,50PLN/kWh",
+        "fee": "yes",
+        "motorcar": "yes",
+        "name": "GreenWay - IKEA Lublin",
+        "network": "GreenWay",
+        "opening_hours": "24/7",
+        "operator": "GreenWay",
+        "operator:wikidata": "Q116450281",
+        "phone": "+48 58 325 10 77",
+        "scooter": "no",
+        "socket:chademo": "1",
+        "socket:chademo:output": "50 kW",
+        "socket:type2": "1",
+        "socket:type2:output": "42 kW",
+        "socket:type2_combo": "1",
+        "socket:type2_combo:output": "50 kW",
+        "website": "https://greenwaypolska.pl"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.570042,
+          51.2825774
+        ]
+      },
+      "id": "node/6407592335"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6648087600",
+        "amenity": "charging_station",
+        "capacity": "2",
+        "name": "MOSiR Aqua",
+        "operator": "PGE Nowa Energia"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.5687488,
+          51.2378253
+        ]
+      },
+      "id": "node/6648087600"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6648087601",
+        "amenity": "charging_station",
+        "capacity": "2",
+        "name": "MOSiR Bystrzyca",
+        "operator": "PGE Nowa Energia"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.5949139,
+          51.2320638
+        ]
+      },
+      "id": "node/6648087601"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6853379068",
+        "amenity": "charging_station",
+        "authentication:app": "yes",
+        "authentication:membership_card": "yes",
+        "bicycle": "no",
+        "capacity": "2",
+        "fee": "yes",
+        "motorcar": "yes",
+        "name": "GreenWay - Lublin Plaza",
+        "network": "GreenWay",
+        "opening_hours": "24/7",
+        "operator": "GreenWay",
+        "operator:wikidata": "Q116450281",
+        "phone": "+48 58 325 10 77",
+        "scooter": "no",
+        "socket:chademo": "1",
+        "socket:chademo:output": "50 kW",
+        "socket:type2": "1",
+        "socket:type2:output": "42 kW",
+        "socket:type2_combo": "1",
+        "socket:type2_combo:output": "50 kW",
+        "website": "https://greenwaypolska.pl"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.550447,
+          51.2448094
+        ]
+      },
+      "id": "node/6853379068"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8856919043",
+        "access": "no",
+        "amenity": "charging_station",
+        "capacity": "2",
+        "operator": "ZDiTM Lublin"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.5307294,
+          51.1945076
+        ]
+      },
+      "id": "node/8856919043"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8865210575",
+        "access": "private",
+        "amenity": "charging_station",
+        "capacity": "1",
+        "operator": "ZDiTM Lublin"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.5524639,
+          51.2838145
+        ]
+      },
+      "id": "node/8865210575"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8865210576",
+        "access": "private",
+        "amenity": "charging_station",
+        "capacity": "1",
+        "operator": "ZDiTM Lublin"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.5522818,
+          51.2838177
+        ]
+      },
+      "id": "node/8865210576"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8865210577",
+        "access": "private",
+        "amenity": "charging_station",
+        "capacity": "1",
+        "operator": "ZDiTM Lublin"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.5521062,
+          51.2838254
+        ]
+      },
+      "id": "node/8865210577"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8865210578",
+        "access": "private",
+        "amenity": "charging_station",
+        "capacity": "1",
+        "operator": "ZDiTM Lublin"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.5519275,
+          51.2838283
+        ]
+      },
+      "id": "node/8865210578"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9202921212",
+        "access": "no",
+        "amenity": "charging_station",
+        "operator": "ZDiTM Lublin"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.5047643,
+          51.2755445
+        ]
+      },
+      "id": "node/9202921212"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9202921213",
+        "access": "no",
+        "amenity": "charging_station",
+        "operator": "ZDiTM Lublin"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.5046122,
+          51.2754741
+        ]
+      },
+      "id": "node/9202921213"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9218457875",
+        "amenity": "charging_station",
+        "operator": "PGE"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.5795556,
+          51.2330891
+        ]
+      },
+      "id": "node/9218457875"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9235761894",
+        "access": "private",
+        "amenity": "charging_station",
+        "name": "ZTM Lublin Bus",
+        "operator": "ZTM Lublin"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.6391413,
+          51.2144717
+        ]
+      },
+      "id": "node/9235761894"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9235761895",
+        "access": "private",
+        "amenity": "charging_station",
+        "name": "ZTM Lublin Bus",
+        "operator": "ZTM Lublin"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.6393202,
+          51.2144952
+        ]
+      },
+      "id": "node/9235761895"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9306216663",
+        "amenity": "charging_station",
+        "capacity": "2",
+        "operator": "PGE Nowa Energia"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.5316019,
+          51.2391599
+        ]
+      },
+      "id": "node/9306216663"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9366861952",
+        "amenity": "charging_station",
+        "capacity": "2",
+        "operator": "Revnet"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.5988291,
+          51.2360181
+        ]
+      },
+      "id": "node/9366861952"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10126901353",
+        "amenity": "charging_station",
+        "capacity": "3",
+        "fee": "yes",
+        "operator": "Orlen",
+        "operator:wikidata": "Q971649"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.541329,
+          51.2421204
+        ]
+      },
+      "id": "node/10126901353"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10156678938",
+        "access": "yes",
+        "amenity": "charging_station",
+        "capacity": "2",
+        "fee": "yes",
+        "operator": "Bricoman"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.4832598,
+          51.2300352
+        ]
+      },
+      "id": "node/10156678938"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10314724222",
+        "access": "no",
+        "amenity": "charging_station",
+        "capacity": "1",
+        "operator": "ZDiTM Lublin"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.5018259,
+          51.2214412
+        ]
+      },
+      "id": "node/10314724222"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10314724223",
+        "access": "no",
+        "amenity": "charging_station",
+        "capacity": "1",
+        "operator": "ZDiTM Lublin"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.5018162,
+          51.221108
+        ]
+      },
+      "id": "node/10314724223"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11044075646",
+        "access": "no",
+        "amenity": "charging_station",
+        "operator": "ZDiTM Lublin"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.470297,
+          51.2248357
+        ]
+      },
+      "id": "node/11044075646"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11044075647",
+        "access": "no",
+        "amenity": "charging_station",
+        "operator": "ZDiTM Lublin"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.4706363,
+          51.2246736
+        ]
+      },
+      "id": "node/11044075647"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11225119260",
+        "amenity": "charging_station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.5034881,
+          51.2339374
+        ]
+      },
+      "id": "node/11225119260"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11302214521",
+        "access": "no",
+        "amenity": "charging_station",
+        "capacity": "1",
+        "operator": "ZDiTM Lublin"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.5662015,
+          51.2309851
+        ]
+      },
+      "id": "node/11302214521"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11302214522",
+        "access": "no",
+        "amenity": "charging_station",
+        "capacity": "1",
+        "operator": "ZDiTM Lublin"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.5656002,
+          51.230711
+        ]
+      },
+      "id": "node/11302214522"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11528366834",
+        "amenity": "charging_station",
+        "capacity": "2",
+        "fee": "yes",
+        "operator": "Ekoenergetyka AxonEasy"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.4796311,
+          51.226588
+        ]
+      },
+      "id": "node/11528366834"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11534904116",
+        "amenity": "charging_station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.5598247,
+          51.2642432
+        ]
+      },
+      "id": "node/11534904116"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11534904117",
+        "amenity": "charging_station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.5599013,
+          51.264192
+        ]
+      },
+      "id": "node/11534904117"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11534904118",
+        "amenity": "charging_station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.5598987,
+          51.2641449
+        ]
+      },
+      "id": "node/11534904118"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11674095929",
+        "access": "yes",
+        "amenity": "charging_station",
+        "capacity": "2"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.5385582,
+          51.2781329
+        ]
+      },
+      "id": "node/11674095929"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11694229560",
+        "amenity": "charging_station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.5676344,
+          51.2319001
+        ]
+      },
+      "id": "node/11694229560"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11694229561",
+        "amenity": "charging_station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.5676613,
+          51.2319076
+        ]
+      },
+      "id": "node/11694229561"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/12534007641",
+        "amenity": "charging_station",
+        "name": "Greenway",
+        "operator": "GreenWay",
+        "operator:wikidata": "Q116450281"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.6026059,
+          51.24938
+        ]
+      },
+      "id": "node/12534007641"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/12585141824",
+        "access": "yes",
+        "amenity": "charging_station",
+        "brand": "Tesla Supercharger",
+        "brand:wikidata": "Q17089620",
+        "capacity": "4",
+        "fee": "yes",
+        "name": "Lublin Supercharger",
+        "operator": "Tesla",
+        "operator:wikidata": "Q478214",
+        "website": "https://www.tesla.com/en_eu/findus?bounds=51.97775582963033%2C24.767488125000003%2C50.575891517599324%2C20.372956875000003&location=Lublinsupercharger"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.570386,
+          51.2821926
+        ]
+      },
+      "id": "node/12585141824"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/12645575367",
+        "amenity": "charging_station",
+        "capacity": "2",
+        "covered": "no",
+        "indoor": "no",
+        "operator": "Inbalance grid"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.596854,
+          51.2617763
+        ]
+      },
+      "id": "node/12645575367"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/12814742776",
+        "access": "yes",
+        "amenity": "charging_station",
+        "brand": "Inbalance grid",
+        "capacity": "2",
+        "operator": "Inbalance grid"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.5443998,
+          51.202961
+        ]
+      },
+      "id": "node/12814742776"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/13269729280",
+        "amenity": "charging_station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.5257806,
+          51.2259363
+        ]
+      },
+      "id": "node/13269729280"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/13269729281",
+        "amenity": "charging_station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.5258027,
+          51.2259269
+        ]
+      },
+      "id": "node/13269729281"
+    }
+  ]
+}
